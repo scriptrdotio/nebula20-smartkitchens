@@ -1,13 +1,53 @@
 var document = require("document"); 
 var deviceManager = require("smartkitchens/entities/devicemanager");
+var log = require("log");
+log.setLevel("INFO");
 
-var devices = deviceManager.getAllDevicesDefinition();
+var devices = getAllDevicesDefinition();
+
 var documentsToDelete = []
-if(devices) {
-    for(var j = 0; j < devices.length; j++) {
-        var entries = deviceManager.getDeviceHistoricalEntries(devices[j].id)
-        for(var i = 50; i < entries.length; i++) {
-             document.delete(entries[i]);
+
+for(var j = 0; j < devices.documents.length; j++) {
+    var entries = getDeviceHistoricalEntries(devices.documents[j].id,1)
+    var pages = Math.ceil(entries.count/50)
+    for(var i = pages; i > 1; i--) {
+        var toDelete = getDeviceHistoricalEntries(devices.documents[j].id, pages);
+        for(var k = 0; k < toDelete.documents.length; k++){
+            log.info(k+" " +JSON.stringify(document.delete(toDelete.documents[k].key)))
         }
-    }
+    }        
+
+}
+
+function getDeviceHistoricalEntries(id, page) {
+    var key = deviceManager.event_prefix + id;;
+   var params = {
+       "query" : "key like \""+key+"_%\"",
+       "fields": "key",
+       "count": true,
+       "pageNumber": page
+   }
+   
+   var result = document.query(params);
+   if(result.metadata.status == "success" && result.result.documents.length > 0) {
+        return result.result;
+   } else {
+        return null;
+   }
+}
+
+function getAllDevicesDefinition() {
+   var key = deviceManager.definition_prefix;
+   var params = {
+       "query" : "key like \""+key+"%\"",
+       "count": true,
+       "fields": "key,id"
+   }
+   
+   var result = document.query(params);
+   if(result.metadata.status == "success" && result.result.documents.length > 0) {
+        return result.result;
+   } else {
+        return null;
+   }
 }

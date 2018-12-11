@@ -102,4 +102,8 @@ var params = {
 var response = apsdb.callApi("AddBridge", params, null);
 responseObject["AddBridge"] = JSON.stringify(response);
 
+
+var scheduleCleanup = schedule("smartkitchens/cleanup/devicesEvents", "5 * * * ?");
+responseObject["scheduleCleanup"] = JSON.stringify(scheduleCleanup);
+
 return responseObject;

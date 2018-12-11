@@ -1,0 +1,13 @@
+var document = require("document"); 
+var deviceManager = require("smartkitchens/entities/devicemanager");
+
+var devices = deviceManager.getAllDevicesDefinition();
+var documentsToDelete = []
+if(devices) {
+    for(var j = 0; j < devices.length; j++) {
+        var entries = deviceManager.getDeviceHistoricalEntries(devices[j].id)
+        for(var i = 50; i < entries.length; i++) {
+             document.delete(entries[i]);
+        }
+    }
+}

@@ -1,0 +1,35 @@
+var deviceManager = require("smartkitchens/entities/devicemanager");
+var utils = require("smartkitchens/entities/utils");
+var _= require("modules/underscore/underscore.js")._;
+
+var log = require("log")
+log.setLevel("INFO")
+//check if device has associated rule and execute it
+function process(device, request){
+    
+  //var deviceDefinition = deviceManager.getDeviceDefinition(device.id)
+  log.info("Device in rules/apply: deviceId "+JSON.stringify(device.id))
+ // log.info("Device in rules/apply:  deviceDefinition "+JSON.stringify(deviceDefinition))
+  var decisionsByGroup = {};
+  _.each(device["document.readACL"], function(value, key) {
+      var group = value.split("@"+request.account.accountKey)[0].split(":")[1]
+      log.info("Rule Group:"+group)
+      try{
+        log.info("Start Proccessing Specific rule")
+        decisionsByGroup[group] = utils.executeDecisionTable("smartkitchens/entities/rules/"+group+"/decision_table_" + device.id, device);
+        log.info("End Proccessing Specific rule")
+      }catch(e){
+        try {
+            log.info("Start Proccessing Generic rule")
+            decisionsByGroup[group] = utils.executeDecisionTable("smartkitchens/entities/rules/"+group+"/decision_table_generic", device);
+            log.info("End Proccessing Generic rule")
+        } catch(e) {
+            
+        }
+        
+      }
+  });
+    
+    return decisionsByGroup;
+  
+}

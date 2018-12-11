@@ -1,0 +1,25 @@
+var log = require("log");
+log.setLevel("INFO");
+
+var notificationManager = require("smartkitchens/entities/notificationmanager");
+var _ = require("modules/underscore/underscore.js")._;
+var device = require("device");
+
+var getUser = device.get(request.user.id);
+var userGroups = getUser.result["groups"];
+var userGroups = (userGroups)? ((typeof userGroups == 'string') ?  [userGroups] : userGroups) :["scriptrio"];
+
+var emails = [];
+var mobiles = [];
+for(var i = 0; i < userGroups.length; i++){
+    var settings = notificationManager.getNotificationSettings(userGroups[i])
+   
+    if(settings && settings.emails) {
+         var emailsSettings = (typeof settings.emails == 'string') ?  [settings.emails] : settings.emails;
+         emails = emails.concat(emailsSettings) ;
+    }
+       
+}
+
+return {emails: _.uniq(emails), mobiles: _.uniq(mobiles)};
+

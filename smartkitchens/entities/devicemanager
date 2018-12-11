@@ -1,0 +1,175 @@
+var document = require("document");
+var device = require("device");
+
+var config = require("smartkitchens/entities/config");
+var _= require("modules/underscore/underscore.js")._;
+
+var log = require("log");
+
+
+var accountKey = config.accountKey;
+
+var event_prefix = accountKey + "_device_event_";
+var definition_prefix = accountKey + "_device_definition_";
+
+
+
+/** We still need to delete historical **/
+function deleteDevice(id) {
+    if(getDeviceDefinition(id) != null) {
+        var key = definition_prefix +id;
+        var result = document.delete(key);
+        if(result.metadata.status == "success")
+            return true;
+    } 
+    return false;
+}
+
+
+function getLatestDeviceEntry(id) {
+   var key = event_prefix + id;;
+   var groups = (typeof request.user.groups == 'string') ?  [request.user.groups] : request.user.groups;
+   if(groups == null)
+       return null;
+  
+   var params = {
+       "query" : "key like \""+key+"_%\" and document.readACL in "+ JSON.stringify(groups),
+       "fields": "country,city,source,humidity_unit,locationType,locationSection,physicalEnvironment,sensor,building,long,event_type,id,pressure,lat,temperature,humidity,name,temperature_unit,pressure_unit,creator,lastModifiedDate,lastModifiedBy,creationDate,document.readACL",
+       "sort": "creationDate<date:DESC>",
+       "resultsPerPage": 1
+   }
+
+   var result = document.query(params);
+   if(result.metadata.status == "success" && result.result.documents.length > 0) {
+        return result.result.documents[0];
+   } else {
+        return null;
+   }
+}
+
+
+
+function getDeviceAlertsEntries(id) {
+    var key = event_prefix + id;;
+   var groups = (typeof request.user.groups == 'string') ?  [request.user.groups] : request.user.groups;
+   if(groups == null)
+       return null;
+   var params = {
+       "query" : "key like \""+key+"_%\" and document.readACL in "+ JSON.stringify(groups) + " and event_type in [\"alert\"]",
+       "fields": "country,city,source,humidity_unit,locationType,locationSection,physicalEnvironment,sensor,building,long,event_type,id,pressure,lat,temperature,humidity,name,temperature_unit,pressure_unit,creator,lastModifiedDate,lastModifiedBy,creationDate,document.readACL"
+   }
+   
+   var result = document.query(params);
+   if(result.metadata.status == "success" && result.result.documents.length > 0) {
+        return result.result.documents;
+   } else {
+        return null;
+   }
+}
+/**
+ * @function listHistory
+ * @param {String} id: the device's id
+ * @return {ArrayList} list of historical device data
+ */
+function getDeviceHistoricalEntries(id) {
+    var key = event_prefix + id;;
+   var groups = (typeof request.user.groups == 'string') ?  [request.user.groups] : request.user.groups;
+   if(groups == null)
+       return null;
+   var params = {
+       "query" : "key like \""+key+"_%\" and document.readACL in "+ JSON.stringify(groups),
+       "fields": "country,city,source,humidity_unit,locationType,locationSection,physicalEnvironment,sensor,building,long,event_type,id,pressure,lat,temperature,humidity,name,temperature_unit,pressure_unit,creator,lastModifiedDate,lastModifiedBy,creationDate,document.readACL"
+   }
+   
+   var result = document.query(params);
+   if(result.metadata.status == "success" && result.result.documents.length > 0) {
+        return result.result.documents;
+   } else {
+        return null;
+   }
+}
+
+function buildDeviceEventDocument(entry, data) {
+    _.extendOwn(entry, data);
+    log.info("def"+JSON.stringify(entry)+"dta"+JSON.stringify(data))
+    delete entry.key;
+    delete entry.versionNumber;
+    var deviceGroups = device.get(request.user.id).result.groups;
+    
+    deviceGroups = (deviceGroups)? ((typeof deviceGroups == 'string') ?  [deviceGroups] : deviceGroups) :["scriptrio"];
+    entry["document.readACL"] = [];
+    _.each(deviceGroups, function(value,key) {
+		entry["document.readACL"].push("group:"+value);
+	})
+    entry["event_type"] = ["event"];
+    entry["key"] = event_prefix + entry.id + "_" + new Date().getTime();
+ 	entry["meta.types"] = {
+        "temperature": "numeric",
+        "humidity": "numeric",
+        "pressure": "numeric"
+   	}
+    
+    log.info("wn"+JSON.stringify(entry))
+    return entry;
+}
+
+function saveDeviceEvent(entry) {
+   log.info("[smartkitchens/entities/devicemanager] saving device event."+JSON.stringify(entry))
+   return document.save(entry);
+}
+
+
+function buildDeviceDefinitionDocument(entry) {
+    var deviceGroups = device.get(request.user.id).result.groups;
+    deviceGroups = (deviceGroups)? ((typeof deviceGroups == 'string') ?  [deviceGroups] : deviceGroups) :["scriptrio"];
+	entry["document.readACL"] = [];
+    entry["key"] = definition_prefix + entry.id;
+    
+    _.each(deviceGroups, function(value,key) {
+		entry["document.readACL"].push("group:"+value);
+	})
+   return entry;
+}
+
+function saveDeviceDefinition(entry) {
+   return document.save(entry);
+}
+
+function getDeviceDefinition(id) {
+   var key = definition_prefix + id;
+   var groups = (typeof request.user.groups == 'string') ?  [request.user.groups] : request.user.groups;
+
+   if(groups == null)
+       return null;
+   var params = {
+       "query" : "key=\""+key+"\" and document.readACL in "+ JSON.stringify(groups),
+       "fields": "country,city,source,locationType,locationSection,physicalEnvironment,sensor,building,long,lat,event_type,id,document.readACL"
+   }
+   
+   var result = document.query(params);
+   if(result.metadata.status == "success" && result.result.documents.length > 0) {
+        return result.result.documents[0];
+   } else {
+        return null;
+   }
+}
+
+
+function getAllDevicesDefinition() {
+   var key = definition_prefix;
+   var groups = (typeof request.user.groups == 'string') ?  [request.user.groups] : request.user.groups;
+
+   if(groups == null)
+       return null;
+   var params = {
+       "query" : "key like \""+key+"%\" and document.readACL in "+ JSON.stringify(groups),
+       "fields": "*"
+   }
+   
+   var result = document.query(params);
+   if(result.metadata.status == "success" && result.result.documents.length > 0) {
+        return result.result.documents;
+   } else {
+        return null;
+   }
+}

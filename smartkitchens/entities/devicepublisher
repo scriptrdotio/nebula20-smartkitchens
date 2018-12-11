@@ -1,0 +1,38 @@
+var deviceManager = require("smartkitchens/entities/devicemanager");
+var utils = require("smartkitchens/entities/utils")
+var config = require("/smartkitchens/entities/config");
+var _ = require("modules/underscore/underscore.js")._;
+
+var log = require("log");
+
+
+var publishChannel = "responseChannel_"
+
+
+function publishDevice(entry, force){
+    var deviceChannels = getDevicePublishChannels(entry);
+    log.info("Entry publish Channels: "+JSON.stringify(deviceChannels))
+     _.each(deviceChannels, function(channel,key) {
+		publishMapData(channel, entry);
+        publishDashboardData(channel, entry)
+	});
+}
+
+function getDevicePublishChannels(device) {
+   var publishChannels = [];
+   _.each(device["document.readACL"], function(value,key) {
+		publishChannels.push(publishChannel+value.split("group:")[1].split("@")[0]);
+	});
+   return publishChannels;
+}
+
+function publishDashboardData(channel, entry) {
+    publish(channel, {"id": "dashboard_"+entry.id, "result": {
+        "latest": entry, 
+        "historical": deviceManager.getDeviceHistoricalEntries(entry.id)}
+    })
+}
+
+function publishMapData(channel, entry){
+     publish(channel, {"id": "map", "result": utils.format([entry])})
+}

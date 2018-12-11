@@ -1,0 +1,20 @@
+var log = require("log");
+log.setLevel("INFO");
+
+var deviceManager = require("smartkitchens/entities/devicemanager");
+var deviceEvaluator = require("smartkitchens/entities/deviceevaluator");
+var devicePublisher = require("smartkitchens/entities/devicepublisher");
+
+function processEntry(entry, forcePublish) {
+
+    deviceEvaluator.evaluateDevice(entry)
+        
+    deviceManager.saveDeviceEvent(entry);
+    
+    devicePublisher.publishDevice(entry, forcePublish);
+    
+}
+
+
+
+

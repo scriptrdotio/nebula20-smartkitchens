@@ -1,0 +1,53 @@
+var document = require("document")
+var deviceManager = require("smartkitchens/entities/devicemanager")
+var config = require("/smartkitchens/entities/config");
+var _= require("modules/underscore/underscore.js")._;
+var log = require("log");
+log.setLevel("INFO")
+var accountKey = config.accountKey;
+
+var prefix = accountKey + "_notification_";
+
+function deleteNotificationSettings(group) {
+     var key = prefix + group;
+     return document.delete(key);
+}
+
+function saveNotificationSettings(group, emails) {
+   var key = prefix + group;
+   if(emails && (typeof emails == 'string'))
+       emails = [emails];
+    
+   var result = document.get(key);
+   if(result.metadata.status == "success") {
+        if(result.result.emails) {
+            var existingEmails = result.result.emails;
+            existingEmails = (typeof existingEmails == 'string') ?  [existingEmails] : existingEmails;
+            
+            var toDelete = _.difference(existingEmails,_.intersection(existingEmails, emails));
+            var toAppend = _.difference(emails, existingEmails);
+            log.info(JSON.stringify({"key": key, "emails": {"append": toAppend, "delete": toDelete}}))
+            document.save({"key": key, "emails": {"append": toAppend, "delete": toDelete}})
+            
+        } else {
+            log.info(JSON.stringify({"key": key, "emails": emails}))
+            document.save({"key": key, "emails": emails})
+        }
+   } else{
+        document.save({"key": key, "emails": emails, "document.readACL": "group:"+group})
+   }
+   
+  
+}
+
+function getNotificationSettings(group) {
+   var key = prefix + group;
+   var result = document.get(key);
+   if(result.metadata.status == "success") {
+       return result.result;
+   } else {
+       return null;
+   }
+}
+
+

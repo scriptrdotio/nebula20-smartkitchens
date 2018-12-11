@@ -1,0 +1,61 @@
+/**
+ * This script is subscribed to the "requestChannel" to which the websocket node in the node-red sample application is publishing
+ * The aforementioned applicaton simply reads messages from the device's mqtt topic and sends them through WS
+ * This script is also subscribed to the "watson" channel that has a binding with the watson_nucleo endpoint. The latter is actually
+ * subscribed to the nucleo device's mqtt topic on waston iot, therefore, the current script can directly consume messages from the topic
+ * Once the current script receives the payload, it parses it and saves the data using an instance of DeviceManager
+ */ 
+//systemLogger.setLevel("OFF");
+var log = require("log"); log.setLevel("info");
+var devices = require("device");
+var _ = require("modules/underscore/underscore.js")._;
+var deviceProcessor = require("smartkitchens/entities/deviceprocessor");
+var deviceManager = require("smartkitchens/entities/devicemanager");
+var config = require("smartkitchens/entities/config");
+var utils = require("smartkitchens/entities/utils");
+
+
+var deviceMapper = require(config.mapper);
+
+
+var data = {};
+var deviceId = null;
+var dataMapping = {};
+
+if(request.user.id == "nebula20") {
+    var body = request.body ? request.body : request.rawBody;
+  	data = typeof(data) == "string" ? JSON.parse(body).d : body.d;
+    data = deviceMapper.mapIt(data);
+    deviceId = data.id; //It should come from the message
+} else {
+    return;
+}
+
+log.info("/smartkitchens/api/subscription/subscriber received the following payload \n" + JSON.stringify(data));
+
+try {
+    var deviceDefinition = deviceManager.getDeviceDefinition(deviceId);
+    log.info("Existing Device Definition: "+JSON.stringify(deviceDefinition))
+    if(deviceDefinition == null) {
+        var deviceDefinition = {};
+        deviceDefinition = config.nebulaDataTopUp[deviceId];
+        deviceDefinition.id = deviceDefinition.name = deviceId;
+        deviceDefinition = deviceManager.buildDeviceDefinitionDocument(deviceDefinition);
+        //Save device definition
+        log.info("[smartkitchens/api/subscription/subscriber] Creating Device Definition: "+JSON.stringify(deviceDefinition))
+        var result = deviceManager.saveDeviceDefinition(deviceDefinition);
+    }
+    
+
+    var entry = {};
+    entry = deviceManager.buildDeviceEventDocument(deviceDefinition, data);
+	log.info("[smartkitchens/api/subscription/subscriber] Processing Event Entry: " + JSON.stringify(entry))	
+    return deviceProcessor.processEntry(entry);
+}catch(exception) {
+    log.info("Exception: "+JSON.stringify(exception))
+	return exception;    
+}
+
+
+
+

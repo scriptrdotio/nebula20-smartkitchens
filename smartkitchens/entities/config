@@ -1,0 +1,52 @@
+var expiry = 60;
+
+var mapper = "smartkitchens/entities/mapper/device/nebula"
+var nebulaDataTopUp =  {
+    "nebula20": {
+        "lat": 45.5602805, 
+        "long": -73.8521324,
+        "building": "Freedom Tower",
+        "city": "Montreal",
+        "country": "Canada",
+        "locationType": "Industrial",
+        "locationSection": "kitchen",
+        "physicalEnvironment": "Fridge",
+        "sensor": "nebula",
+        "source": "simulator"
+    },
+    "nebula30": {
+        "lat": 45.562124, 
+        "long": -73.843034,
+        "building": "Le Fabreville Motel et Suites",
+        "city": "Montreal",
+        "country": "Canada",
+        "locationType": "Industrial",
+        "locationSection": "kitchen",
+        "physicalEnvironment": "Fridge",
+        "sensor": "nebula",
+        "source": "simulator"
+    },
+    "nebula40": {
+        "lat": 45.563124, 
+        "long": -73.833034,
+        "building": "Bla",
+        "city": "Montreal",
+        "country": "Canada",
+        "locationType": "Commercial",
+        "locationSection": "kitchen",
+        "physicalEnvironment": "Fridge",
+        "sensor": "nebula",
+        "source": "simulator"
+    }
+}	
+
+var email = {
+    "TO": "",
+    "FROM": "Nebula20 - Smart Kitchens App",
+    "BODY": "Nebula20 - Smart Kitchens App"
+}
+
+var accountKey = request.account.accountKey
+
+var usersGroups=["scriptrio"]
+var devicesGroups=["scriptrio"]

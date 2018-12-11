@@ -1,0 +1,23 @@
+<div ng-init="vm.init();" ng-controller= "mapCtrl as vm"> <scriptr-map
+             sources-info="vm.sources"
+             clustered-view="true"
+             cluster-zoom="8"
+             path-stroke-opacity="0.5"
+             path-stroke-weight="10"
+             summary-icons="vm.icons"
+             api="smartkitchens/api/getLatestDevices"
+             api-params="{}"
+             msg-tag="map"
+             geofence-manager="false"
+             bounce="true"
+             selected-tracked-asset="{{vm.deviceKey}}"
+             detailed-zoom-min="12"
+             on-select-asset="vm.onSelectAsset"
+             set-marker-icon="vm.setMarkerIcon"
+             max-asset-points=1
+>
+  <div>
+    <info-window id="infoWindowTemplate_simulator" template="/smartkitchens/view/html/views/map/info_simulator.html" max-width="600" max-height="700" style="position: relative"></info-window>
+</info-window>  
+</scriptr-map>
+</div>

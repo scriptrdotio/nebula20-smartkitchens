@@ -83,8 +83,8 @@ var params = {
     'name': 'nebula20',
     'protocol': 'mqtt',
     'url':'quickstart.messaging.internetofthings.ibmcloud.com',
-    'topic': 'iot-2/type/nebula20/id/nebula20'+request.account.anonymousToken+'/evt/+/fmt/json',
-    'clientId': 'a:quickstart:scriptr-'+request.account.anonymousToken
+    'topic': 'iot-2/type/nebula20/id/nebula20'+request.account.accountKey+'/evt/+/fmt/json',
+    'clientId': 'a:quickstart:scriptr-'+request.account.accountKey
     
 }
 var response = apsdb.callApi("SaveExternalEndpointConfiguration", params, null);

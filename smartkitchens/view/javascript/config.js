@@ -1,5 +1,5 @@
 var login = {
-   redirectTarget: "/smartkitchens/view/html/index.html",
+   redirectTarget: "/smartkitchens/view/html/index.html#/map",
    expiry:6,
    loginTarget: "/smartkitchens/view/html/login.html",
    loginApi: "/smartkitchens/api/login/login",

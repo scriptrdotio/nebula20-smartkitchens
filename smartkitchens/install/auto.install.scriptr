@@ -4,7 +4,7 @@ var devices = require("device");
 var groups = require("group");
 
 
-/** SETUP ADVANCED APP REQUIRED DOMAIN IF NO DOMAIN IS SET **/
+/** Setup account default domain if none is set **/
 var subdomain = request.account.accountKey;
 var params = {
     "apsdb.name": subdomain
@@ -14,11 +14,16 @@ var step = apsdb.callApi("SaveSubdomain", params, null);
 responseObject["subdomainCreation_"+subdomain] = JSON.stringify(step)
 
 
+/** Create a group editor that allows its users to access the scriptr ide plugins, ex: decision table **/
+var editorGroup = "editor";
+var step2 = groups.create(editorGroup);
+responseObject["groupCreation_"+editorGroup] = JSON.stringify(step2);
+
+
 /**
-	Create subscibe Channels per Group to send over data to the browser subscriber 
-    Create a device used to login for every group
+	Create groups and a channels with subscribeACL & publishACL set to the created group 
 **/
-var groupsList = ["scriptrio"];
+var groupsList = ["scriptrio", "fe"];
 groupsList.forEach(function(name) {
    	var step1 = groups.create(name);
    	responseObject["groupCreation_"+name] = JSON.stringify(step1);
@@ -28,11 +33,6 @@ groupsList.forEach(function(name) {
 	var step2 = apsdb.callApi("SaveChannel", params , null )
    	responseObject["channelCreation_"+params.name] = JSON.stringify(step2)
 });
-
-
-var editorGroup = "editor";
-var step2 = groups.create(editorGroup);
-responseObject["groupCreation_"+editorGroup] = JSON.stringify(step2);
 
 
 /** Create Anonymous publish channel used to receive requests from browser **/
@@ -48,7 +48,7 @@ channelsList.forEach(function(channel) {
 });
 
 
-/** SETUP ADVANCED APP DEMO DEVICE PER GROUP  **/
+/** Setup a demo device(user) used in the login page of the smart kitchen app **/
 var devicesList = [
     {
         "id":"demo@fe.com",
@@ -61,14 +61,7 @@ var devicesList = [
         "password" : "demo",
         "name" : "demo@scriptr.io",
         "groups": ["scriptrio","editor"]
-    },
-    {
-        "id":"editor",
-        "password" : "demo",
-        "name" : "editor",
-        "groups": ["editor"] //This is the group name required by the logged in user to have in order open the decision table
-    } 
-   
+    }
 ];
 
 devicesList.forEach(function(params) {
@@ -93,7 +86,7 @@ responseObject["createMqttExternalEndPoint"] = JSON.stringify(response);
 
 
 //Link the bridge to the channel for publishing messages
-//You need to activate the free trial bygoing to channels and clicking on bridges under any channel and clicking on free trial button
+//The free trial if not activated yet can be activated by going to channels and clicking on bridges under any channel and clicking on free trial button
 var params = {
     "channel": "nebulaDigest",
     "externalEndpointConfiguration":"nebula20",
@@ -102,7 +95,7 @@ var params = {
 var response = apsdb.callApi("AddBridge", params, null);
 responseObject["AddBridge"] = JSON.stringify(response);
 
-
+//Set a scheduler to cleanup events
 var scheduleCleanup = schedule("smartkitchens/cleanup/devicesEvents", "5 * * * ?");
 responseObject["scheduleCleanup"] = JSON.stringify(scheduleCleanup);
 

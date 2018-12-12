@@ -71,11 +71,8 @@
               validateTokenApi: login.validateTokenApi
           }
       );
-       var underscore = angular.module('underscore', []);
-       	 underscore.factory('_', ['$window', function($window) {		
-         return $window._; // assumes underscore has already been loaded on the page		
-       }]);
 
+      angular.module('myApp').run(cachedTemplates);  
     </script>
   </head>
   <body ng-app="myApp">

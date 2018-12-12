@@ -76,16 +76,15 @@ devicesList.forEach(function(params) {
 var channelsList =  ["nebulaDigest"];
 var params = {"name" : "nebulaDigest", "subscribeACL": ["nebula20"],"publishACL":  ["nebula20"]};
 var step6 = apsdb.callApi("SaveChannel", params , null )
-responseObject["channelCreation_"+params.name] = JSON.stringify(step6)
-
+responseObject["channelCreation_"+params.name] = JSON.stringify(step6);
 
 //Setup the mqtt connection instance (ibm free tier)
 var params = {
     'name': 'nebula20',
     'protocol': 'mqtt',
     'url':'quickstart.messaging.internetofthings.ibmcloud.com',
-    'topic': 'iot-2/type/nebula20/id/nebula20'+request.account.accountKey+'/evt/+/fmt/json',
-    'clientId': 'a:quickstart:scriptr-'+request.account.accountKey
+    'topic': 'iot-2/type/nebula20/id/nebula20'+request.account.anonymousToken+'/evt/+/fmt/json',
+    'clientId': 'a:quickstart:scriptr-'+request.account.anonymousToken
     
 }
 var response = apsdb.callApi("SaveExternalEndpointConfiguration", params, null);

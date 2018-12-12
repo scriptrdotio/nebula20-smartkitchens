@@ -23,15 +23,15 @@ responseObject["groupCreation_"+editorGroup] = JSON.stringify(step2);
 /**
 	Create groups and a channels with subscribeACL & publishACL set to the created group 
 **/
-var groupsList = ["scriptrio", "fe"];
+var groupsList = ["scriptrio"];
 groupsList.forEach(function(name) {
-   	var step1 = groups.create(name);
-   	responseObject["groupCreation_"+name] = JSON.stringify(step1);
+   	var step3 = groups.create(name);
+   	responseObject["groupCreation_"+name] = JSON.stringify(step3);
     var subAcl = "group:".concat(name);
     var pubAcl = "group:".concat(name);
  	var params = {"name" :"responseChannel_"+name, "subscribeACL": [subAcl],"publishACL":  [pubAcl]};
-	var step2 = apsdb.callApi("SaveChannel", params , null )
-   	responseObject["channelCreation_"+params.name] = JSON.stringify(step2)
+	var step4 = apsdb.callApi("SaveChannel", params , null )
+   	responseObject["channelCreation_"+params.name] = JSON.stringify(step4)
 });
 
 
@@ -43,41 +43,48 @@ var options = {
 }
 
 channelsList.forEach(function(channel) {
-   var step = channels.create(channel, options);
-   responseObject["channelCreation_"+channel] = JSON.stringify(step)
+   var step5 = channels.create(channel, options);
+   responseObject["channelCreation_"+channel] = JSON.stringify(step5)
 });
 
 
-/** Setup a demo device(user) used in the login page of the smart kitchen app **/
 var devicesList = [
-    {
-        "id":"demo@fe.com",
-        "password" : "demo",
-        "name" : "demo@fe.com",
-        "groups": ["fe","editor"]
-    },
-    {
+    {//Device used to login to smart kitchen app
         "id":"demo@scriptr.io",
         "password" : "demo",
         "name" : "demo@scriptr.io",
         "groups": ["scriptrio","editor"]
+    },
+    { //This device is used by to authenticate the mqtt bridge
+        "id":"nebula20",
+        "password" : "demo",
+        "name" : "nebula20",
+        "groups": ["scriptrio"]
     }
 ];
 
 devicesList.forEach(function(params) {
-   	var step= devices.save(params);
-    responseObject["deviceCreation_"+params.id] = JSON.stringify(step);
+   	var step6= devices.save(params);
+    responseObject["deviceCreation_"+params.id] = JSON.stringify(step6);
 
-    step= devices.generateToken(params.id);
-    responseObject["deviceToken_"+params.id] = JSON.stringify(step);
+    var step7= devices.generateToken(params.id);
+    responseObject["deviceToken_"+params.id] = JSON.stringify(step7);
 });
+
+
+//Create the channel used by the mqtt bridge between scriptr and ibm bluemix
+var channelsList =  ["nebulaDigest"];
+var params = {"name" : "nebulaDigest", "subscribeACL": ["nebula20"],"publishACL":  ["nebula20"]};
+var step6 = apsdb.callApi("SaveChannel", params , null )
+responseObject["channelCreation_"+params.name] = JSON.stringify(step6)
+
 
 //Setup the mqtt connection instance (ibm free tier)
 var params = {
     'name': 'nebula20',
     'protocol': 'mqtt',
     'url':'quickstart.messaging.internetofthings.ibmcloud.com',
-    'topic': 'iot-2/type/nebula/id/nebula'+request.account.accountKey+'/evt/+/fmt/json',
+    'topic': 'iot-2/type/nebula20/id/nebula20'+request.account.accountKey+'/evt/+/fmt/json',
     'clientId': 'a:quickstart:scriptr-'+request.account.accountKey
     
 }
@@ -94,6 +101,13 @@ var params = {
 }
 var response = apsdb.callApi("AddBridge", params, null);
 responseObject["AddBridge"] = JSON.stringify(response);
+
+
+
+var pubsub = require("pubsub");
+var topic = pubsub.getInstance("nebulaDigest");
+var response = topic.subscribe("smartkitchens/api/subscription/subscriber", "script");
+responseObject["subscribeScriptToChannel"] = JSON.stringify(response);
 
 //Set a scheduler to cleanup events
 var scheduleCleanup = schedule("smartkitchens/cleanup/devicesEvents", "5 * * * ?");

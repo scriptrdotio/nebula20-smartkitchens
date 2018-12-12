@@ -45,8 +45,6 @@ try {
         log.info("[smartkitchens/api/subscription/subscriber] Creating Device Definition: "+JSON.stringify(deviceDefinition))
         var result = deviceManager.saveDeviceDefinition(deviceDefinition);
     }
-    
-
     var entry = {};
     entry = deviceManager.buildDeviceEventDocument(deviceDefinition, data);
 	log.info("[smartkitchens/api/subscription/subscriber] Processing Event Entry: " + JSON.stringify(entry))	

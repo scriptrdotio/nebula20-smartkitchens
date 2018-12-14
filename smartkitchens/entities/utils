@@ -12,6 +12,7 @@ function format(data){
             };
         }
         var point = _.mapObject(datum, function(value, key){ return {"value": value}; });
+        if(point.creationDate == null)  point.creationDate = {"value": (new Date()).toISOString()};
         result[datum.id]["0"].push(point)
     }
     return result;

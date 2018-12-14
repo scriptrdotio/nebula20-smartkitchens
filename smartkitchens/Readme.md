@@ -29,12 +29,12 @@ Note that the nebula-2.0's expected payload is as follow:
 - Installation API "smartkitchens/install/auto.install.scriptr" to install the app dependencies:
      - The channels needed by the application.
      - A default subdomain for the account, if not available.
-     - Default credentials (demo@scriptr.io/demo) to use for login.
+     - Default credentials (demo/demo) to use for login.
 
 # How to view the application
 The installation API "smartkitchens/install/auto.install.scriptr" needs to be executed once. If you registered with scriptr.io with the nebula20 promotion code, this script should have already been executed.
 
-To visualize your nebula20 data in real-time, open the script "smartkitchens/view/html/login.html" and click View, then login with the demo@scriptr.io/demo credentials. You will land on a map with a cluster view of all the devices locations that pushed data through your nebula20.
+To visualize your nebula20 data in real-time, open the script "smartkitchens/view/html/login.html" and click View, then login with the demo/demo credentials. You will land on a map with a cluster view of all the devices locations that pushed data through your nebula20.
 
 Zooming into the map and clicking on a marker will display an info window with the latest data the device has published. You can click on edit dashboard to view a detailed dashboard of a specific device.
 
@@ -58,20 +58,20 @@ The api folder contains scripts that define the API of the asset-tracking applic
 
 - smartkitchens/api/subscription/subscriber: this script is subscribed to the nebulaDigest channel and would consume all the messages containing the measurements made by the device's sensors.
 "smartkitchens/api/subscription/subscriber" uses "entities/devicemanager" to persit the data. It uses "entities/deviceevaluator" to check for the occurrence of alerts. 
-The script also uses "entities/devicepublisher" to publish the received data in real-time to the UI.
-- api/getDeviceAlerts: this script is invoked by the UI to obtain the list of the alerts that were triggered for a device by the application. This list is actually obtained from "entities/devicemanager". Passing the "filter" parameter narrows the list to the alerts related to the device with and id matching the value of "filter". 
-- api/getDeviceHistoru: this script is invoked by the UI to obtain the list of all the events that occurred through time for a device. 
+The script also uses "entities/devicePublisher" to publish the received data in real-time to the UI.
+- api/getDeviceAlerts: this script is invoked by the UI to obtain the list of the alerts that were triggered for a device by the application. This list is actually obtained from "entities/deviceManager". Passing the "filter" parameter narrows the list to the alerts related to the device with and id matching the value of "filter". 
+- api/getDeviceHistory: this script is invoked by the UI to obtain the list of all the events that occurred through time for a device. 
 - api/getLatestDevices: this script is invoked by the UI to obtain the latest events of all devices.
 - api/getLatestDevices: this script is invoked by the UI to obtain the latest event of a specific device.
 
 ## /entities folder
 This folder contains the scripts that implement the business logic and business rules of the application. 
 
-- /entities/devicemanager: this script is responsible for managing device data and persiting them in the "Default" data store of your account (**note:** to view your data stores, click on "Tools" in the scriptr.io workspace toolbar, then click on "Data Explorer").
-- /entities/deviceevaluator: the deviceevaluator receives device data and applies business rules on them to determine if an alert should be raised. Business rules are defined in a decision table ("/entities/rules/scriptrio/decision_table_generic"), which is loaded and executed by the "entities/rules/apply" script (**note:** decision tables are standalone API, i.e. you can send them requests - e.g. http requests - or you can execute them from within a script by using the **sdtLibScript.execute()** utility. Check "/entities/rules/apply" and "/entities/utils" for details)
-- /entities/devicepublisher: the devicepublisher reads the latest updates from the devicemanager, transforms them into a format that suits the expectations of the charts in the UI, and broadcasts them to the latter by publishing the data into the "responseChannel"  channel (**note:** we use channels in scriptr.io to broadcast messages in real-time to other components, such as for example UI components). The charts in the UI are subscribed to the channel upon installation of the application and therefore, will automatically reflect data updates as soon as they are ingested (smartkitchens/api/subscription/subscriber).
+- /entities/deviceManager: this script is responsible for managing device data and persiting them in the "Default" data store of your account (**note:** to view your data stores, click on "Tools" in the scriptr.io workspace toolbar, then click on "Data Explorer").
+- /entities/deviceevaluator: the deviceEvaluator receives device data and applies business rules on them to determine if an alert should be raised. Business rules are defined in a decision table ("/entities/rules/scriptrio/decision_table_generic"), which is loaded and executed by the "entities/rules/apply" script (**note:** decision tables are standalone API, i.e. you can send them requests - e.g. http requests - or you can execute them from within a script by using the **sdtLibScript.execute()** utility. Check "/entities/rules/apply" and "/entities/utils" for details)
+- /entities/devicePublisher: the devicePublisher reads the latest updates from the deviceManager, transforms them into a format that suits the expectations of the charts in the UI, and broadcasts them to the latter by publishing the data into the "responseChannel"  channel (**note:** we use channels in scriptr.io to broadcast messages in real-time to other components, such as for example UI components). The charts in the UI are subscribed to the channel upon installation of the application and therefore, will automatically reflect data updates as soon as they are ingested (smartkitchens/api/subscription/subscriber).
 - /entities/utils: a utility script that contains utility functions, such as format(), to transform incoming device data into a structure that is expected by the UI
--/entities/rules/scriptrio/alerts: a decision table that defines the conditions to generate an alert (some threshold values). You can modify these rules visually from the scriptr.io workspace (the script opens in a decision table editor)
+-/entities/rules/scriptrio/decision_table_generic: a decision table that defines the conditions to generate an alert (some threshold values). You can modify these rules visually from the scriptr.io workspace (the script opens in a decision table editor)
 
 ## /entities/actions
 This folder contains two utility scripts for applying email templates.

@@ -63,6 +63,8 @@ $.widget( "scriptr.authorization", {
     
     //Event that is fired whenever a token is detected to be invalid 
     onTokenInvalid :function(){
+        $.removeCookie('user',{'path':'/'});
+        $.removeCookie('token',{'path':'/'});
         location.href= this.loginPage;
     },
     
@@ -71,8 +73,8 @@ $.widget( "scriptr.authorization", {
     },
     
     logout:function(){
-        localStorage.removeItem("user");
+        $.removeCookie('user',{'path':'/'});
         $.removeCookie('token',{'path':'/'});
-        this.onTokenInvalid();
+        location.href= this.loginPage;
     }
 });

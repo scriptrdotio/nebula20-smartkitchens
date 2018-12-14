@@ -22,16 +22,16 @@ if(typeof pl != "object") {
   return[];
 } else { 
 	  if((pl != null && pl["temperature"] != undefined && pl["temperature"] >8) && isAny("humidity") && isAny("pressure")){
-       decision.push({ "action": "HIGH_TEMPERATURE","isAlert": "true" });
+       decision.push({ "sendEmail": "HIGH_TEMPERATURE","isAlert": "true" });
 	} 
 	  if(isAny("temperature") && (pl != null && pl["humidity"] != undefined && pl["humidity"] >30) && isAny("pressure")){
-       decision.push({ "action": "HIGH_HUMIDITY","isAlert": "true" });
+       decision.push({ "sendEmail": "HIGH_HUMIDITY","isAlert": "true" });
 	} 
 	  if((pl != null && pl["temperature"] != undefined && pl["temperature"] <2) && isAny("humidity") && isAny("pressure")){
-       decision.push({ "action": "LOW_TEMPERATURE","isAlert": "true" });
+       decision.push({ "sendEmail": "LOW_TEMPERATURE","isAlert": "true" });
 	} 
 	  if(isAny("temperature") && (pl != null && pl["humidity"] != undefined && pl["humidity"] <10) && isAny("pressure")){
-       decision.push({ "action": "LOW_HUMIDITY","isAlert": "true" });
+       decision.push({ "sendEmail": "LOW_HUMIDITY","isAlert": "true" });
 	} 
 }
 //RULES EVALUATION END

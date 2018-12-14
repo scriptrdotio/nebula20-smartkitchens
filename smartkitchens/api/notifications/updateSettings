@@ -1,6 +1,4 @@
-var notificationManager = require("smartkitchens/entities/notificationmanager");
-var log = require("log");
-log.setLevel("INFO");
+var notificationManager = require("smartkitchens/entities/notificationManager");
 
 var device = require("device");
 

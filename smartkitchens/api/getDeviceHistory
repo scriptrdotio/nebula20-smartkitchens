@@ -1,10 +1,4 @@
-var deviceManager = require("smartkitchens/entities/devicemanager")
-
-var utils = require("smartkitchens/entities/utils");
-var log = require("log");
-
-log.setLevel("INFO");
-
+var deviceManager = require("smartkitchens/entities/deviceManager")
 
 var query = {};
 if(request.body != null){

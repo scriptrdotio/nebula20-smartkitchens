@@ -1,12 +1,12 @@
 var document = require("document")
-var deviceManager = require("smartkitchens/entities/devicemanager")
-var config = require("/smartkitchens/entities/config");
+var deviceManager = require("smartkitchens/entities/deviceManager")
+var config = require("/smartkitchens/config/config");
 var _= require("modules/underscore/underscore.js")._;
+
 var log = require("log");
 log.setLevel("INFO")
-var accountKey = config.accountKey;
 
-var prefix = accountKey + "_notification_";
+var prefix = "notification_";
 
 function deleteNotificationSettings(group) {
      var key = prefix + group;
@@ -26,18 +26,16 @@ function saveNotificationSettings(group, emails) {
             
             var toDelete = _.difference(existingEmails,_.intersection(existingEmails, emails));
             var toAppend = _.difference(emails, existingEmails);
-            log.info(JSON.stringify({"key": key, "emails": {"append": toAppend, "delete": toDelete}}))
+            log.info("[smartkitchens/entities/notificationmanager] update notifications settings " + JSON.stringify({"key": key, "emails": {"append": toAppend, "delete": toDelete}}))
             document.save({"key": key, "emails": {"append": toAppend, "delete": toDelete}})
-            
         } else {
-            log.info(JSON.stringify({"key": key, "emails": emails}))
+            log.info("[smartkitchens/entities/notificationmanager] update notifications settings " + JSON.stringify({"key": key, "emails": emails}))
             document.save({"key": key, "emails": emails})
         }
    } else{
+        log.info("[smartkitchens/entities/notificationmanager] create notifications settings " + JSON.stringify({"key": key, "emails": emails, "document.readACL": "group:"+group}))
         document.save({"key": key, "emails": emails, "document.readACL": "group:"+group})
    }
-   
-  
 }
 
 function getNotificationSettings(group) {

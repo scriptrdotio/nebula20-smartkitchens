@@ -1,6 +1,6 @@
 var http = require("http");
 var device = require("device");
-var config = require("smartkitchens/entities/config")
+var config = require("smartkitchens/config/config")
 
 var id = request.parameters["id"] || "demo"; 
 var password = request.parameters["password"] || "demo";

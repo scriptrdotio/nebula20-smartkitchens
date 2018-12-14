@@ -1,12 +1,9 @@
 var device = require("device");
-var config = require("smartkitchens/entities/config");
-var log = require("log");
-log.setLevel("INFO");
+var config = require("smartkitchens/config/config");
 var _ = require("modules/underscore/underscore.js")._;
 
 var availableRuleGroups = config.devicesGroups;
 
-var accountKey = request.account.accountKey;
 var getDevice = device.get(request.user.id);
 
 if(getDevice.metadata.status == "success"){

@@ -1,17 +1,16 @@
-var deviceManager = require("smartkitchens/entities/devicemanager");
+var deviceManager = require("smartkitchens/entities/deviceManager");
 var utils = require("smartkitchens/entities/utils")
-var config = require("/smartkitchens/entities/config");
 var _ = require("modules/underscore/underscore.js")._;
 
 var log = require("log");
-
+log.setLevel("INFO");
 
 var publishChannel = "responseChannel_"
 
 
-function publishDevice(entry, force){
+function publishDevice(entry){
     var deviceChannels = getDevicePublishChannels(entry);
-    log.info("Entry publish Channels: "+JSON.stringify(deviceChannels))
+    log.info("[smartkitchens/entities/devicepublisher] Entry publish Channels: "+JSON.stringify(deviceChannels))
      _.each(deviceChannels, function(channel,key) {
 		publishMapData(channel, entry);
         publishDashboardData(channel, entry)

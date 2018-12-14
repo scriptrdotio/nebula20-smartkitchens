@@ -1,4 +1,4 @@
-var deviceManager = require("smartkitchens/entities/devicemanager")
+var deviceManager = require("smartkitchens/entities/deviceManager")
 var utils = require("smartkitchens/entities/utils");
 
 var documents = [];

@@ -1,9 +1,7 @@
-var log = require("log");
-var document = require("document");
-var utils = require("smartkitchens/entities/utils");
-var config = require("smartkitchens/entities/config");
 var _= require("modules/underscore/underscore.js")._;
-var emailAlert = require("smartkitchens/entities/actions/emailOnAlert")
+var emailAlert = require("smartkitchens/entities/actions/emailOnAlert");
+
+var log = require("log");
 log.setLevel("INFO");
 
 function evaluateDevice(entry) {
@@ -11,17 +9,17 @@ function evaluateDevice(entry) {
     var rules = require("smartkitchens/entities/rules/apply");
     var recordAsAlert = false;
     var allGenericDecisionsByGroup = rules.process(entry, request);
-    log.info("Decisions processing for event "+JSON.stringify(allGenericDecisionsByGroup));
+    log.info("[smartkitchens/entities/deviceevaluator] Actions processing for event "+JSON.stringify(allGenericDecisionsByGroup));
     _.each(allGenericDecisionsByGroup, function(allGenericDecisions, group){
         for(var i = 0; allGenericDecisions && i< allGenericDecisions.length; i++){
-            emailAlert.execute(null, entry, allGenericDecisions[i].action, group);
+            emailAlert.execute(null, entry, allGenericDecisions[i].sendEmail, group);
             if(allGenericDecisions[i].isAlert == "true"){
                 recordAsAlert = true; 
             }
    		}
-    })
+    });
     
-    log.info("flag entry as alert: "+ recordAsAlert)
+    log.info("[smartkitchens/entities/deviceevaluator] Flag device event as alert: "+ recordAsAlert)
     if(recordAsAlert) {
         entry["event_type"].push("alert")
     }

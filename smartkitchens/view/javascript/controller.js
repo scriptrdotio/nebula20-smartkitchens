@@ -5,6 +5,9 @@ myApp.controller('mapCtrl', function($location, mapConstants, $routeParams) {
     vm.sources = mapConstants.sources;
     vm.icons = mapConstants.infoWindows.icons;
     
+    vm.go = function(path) {
+        $location.path(path)
+    }
     vm.init = function() {
          if($routeParams && $routeParams.deviceId) {
              vm.deviceKey = $routeParams.deviceId;

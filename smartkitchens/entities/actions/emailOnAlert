@@ -1,6 +1,6 @@
-var notificationManager = require("smartkitchens/entities/notificationmanager");
+var notificationManager = require("smartkitchens/entities/notificationManager");
 var templates = require("smartkitchens/entities/actions/templates");
-var config = require("smartkitchens/entities/config");
+var config = require("smartkitchens/config/config");
 var _ = require("modules/underscore/underscore.js")._;
 
 var log = require("log");

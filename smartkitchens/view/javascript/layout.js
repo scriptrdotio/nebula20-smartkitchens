@@ -10,7 +10,7 @@ var headerItems = {
     "logo": "//blog.scriptr.io/wp-content/uploads/2016/10/logo-1.png",
     "items": [],
     "subitems": [
-        {"id":"1", "iconClass":"fa fa-bell", "label": "Notification Rules", "route":"#/notifications", "active":"false"} 
+        {"id":"1", "iconClass":"fa fa-bell", "label": "Notification Settings", "route":"#/notifications", "active":"false"} 
     ], 
     "logout": {"icon": "fa fa-sign-out", "label": "Logout", "route":"#/logout"}
 };

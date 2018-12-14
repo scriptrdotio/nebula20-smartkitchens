@@ -50,9 +50,9 @@ channelsList.forEach(function(channel) {
 
 var devicesList = [
     {//Device used to login to smart kitchen app
-        "id":"demo@scriptr.io",
+        "id":"demo",
         "password" : "demo",
-        "name" : "demo@scriptr.io",
+        "name" : "demo",
         "groups": ["scriptrio","editor"]
     },
     { //This device is used by to authenticate the mqtt bridge

@@ -1,16 +1,13 @@
 var document = require("document"); 
-var deviceManager = require("smartkitchens/entities/devicemanager");
-var log = require("log");
-log.setLevel("INFO");
+var deviceManager = require("smartkitchens/entities/deviceManager");
 
 var devices = getAllDevicesDefinition();
-
 var documentsToDelete = []
 
 for(var j = 0; j < devices.documents.length; j++) {
     var entries = getDeviceHistoricalEntries(devices.documents[j].id,1)
     var pages = Math.ceil(entries.count/50)
-    for(var i = pages; i > 1; i--) {
+    for(var i = pages; i > 0; i--) {
         var toDelete = getDeviceHistoricalEntries(devices.documents[j].id, pages);
         for(var k = 0; k < toDelete.documents.length; k++){
             log.info(k+" " +JSON.stringify(document.delete(toDelete.documents[k].key)))

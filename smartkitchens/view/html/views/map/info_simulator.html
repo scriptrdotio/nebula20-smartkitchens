@@ -52,6 +52,6 @@
             </div>
         </div> 
     </section>    
-    <a type="button" ng-href="#/dashboard/deviceId/{{marker.details.id.value}}" class="btn btn-success active mt15" ng-cloak>View Dashboard</a>
-    <a type="button" ng-href="#/alerts/deviceId/{{marker.details.id.value}}" class="btn btn-danger active mt15" ng-cloak>View Alerts</a>
+    <button type="button" ng-click='vm.go("/dashboard/deviceId/"+marker.details.id.value)' class="btn btn-success active mt15" ng-cloak>View Dashboard</button>
+    <button type="button" ng-click='vm.go("/alerts/deviceId/"+marker.details.id.value)' class="btn btn-danger active mt15" ng-cloak>View Alerts</button>
 </div>

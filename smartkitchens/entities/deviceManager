@@ -1,17 +1,13 @@
 var document = require("document");
 var device = require("device");
 
-var config = require("smartkitchens/entities/config");
 var _= require("modules/underscore/underscore.js")._;
 
 var log = require("log");
+log.setLevel("INFO");
 
-
-var accountKey = config.accountKey;
-
-var event_prefix = accountKey + "_device_event_";
-var definition_prefix = accountKey + "_device_definition_";
-
+var event_prefix = "device_event_";
+var definition_prefix = "device_definition_";
 
 
 /** We still need to delete historical **/
@@ -46,8 +42,6 @@ function getLatestDeviceEntry(id) {
         return null;
    }
 }
-
-
 
 function getDeviceAlertsEntries(id) {
     var key = event_prefix + id;;
@@ -91,7 +85,6 @@ function getDeviceHistoricalEntries(id) {
 
 function buildDeviceEventDocument(entry, data) {
     _.extendOwn(entry, data);
-    log.info("def"+JSON.stringify(entry)+"dta"+JSON.stringify(data))
     delete entry.key;
     delete entry.versionNumber;
     var deviceGroups = device.get(request.user.id).result.groups;
@@ -108,8 +101,6 @@ function buildDeviceEventDocument(entry, data) {
         "humidity": "numeric",
         "pressure": "numeric"
    	}
-    
-    log.info("wn"+JSON.stringify(entry))
     return entry;
 }
 

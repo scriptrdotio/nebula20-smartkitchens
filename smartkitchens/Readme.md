@@ -43,18 +43,32 @@ Clicking on alerts lists all the logged events from your devices.
 As your nebula-2.0 starts pushing data to IBM Bluemix, the dashboard and the map will reflect the new readings from your devices automatically.
 
 # Notes
-This app provides a simulator that allows you to simulate the data feed from the gateway for testing purposes. To use it, you can schedule the "quickstart-app/simulator/conduit/data" script on a recurring basis with a time interval of your choice.
+This app provides a config file you can use to setup default info for your device. Assuming your device was build and compiled with an id set to nebula20, update config/config file nebula20 object with the info you want such as latitude, longitude, etc.
+```
+"nebula20": {
+        "lat": 45.5602805, 
+        "long": -73.8521324,
+        "building": "Freedom Tower",
+        "city": "Montreal",
+        "country": "Canada",
+        "locationType": "Industrial",
+        "locationSection": "kitchen",
+        "physicalEnvironment": "Fridge",
+        "sensor": "nebula",
+        "source": "simulator"
+    }
+```
 
 # Dependencies
 Underscore module (if you registered with scriptr.io with the nebula20 promotion code, this module should have already been installed).
 
-Your application is deployed to your account with a package version of the [UIComponents](https://github.com/scriptrdotio/UIComponents) module which you can find under asset-tracking/view/build/. If you wish to use an unpackaged version of the [UIComponents](https://github.com/scriptrdotio/UIComponents) module and modify it, replace index.html with index.unpackage.html and checkout the master branch of [UIComponents](https://github.com/scriptrdotio/UIComponents). Read more about it [here](https://github.com/scriptrdotio/multitech-asset-tracking/blob/master/asset-tracking/view/build/Readme.md).
+Your application is deployed to your account with a package version of the [UIComponents](https://github.com/scriptrdotio/UIComponents) module which you can find under nebula20-smartkitchens/view/build/. If you wish to use an unpackaged version of the [UIComponents](https://github.com/scriptrdotio/UIComponents) module and modify it, replace index.html with index.unpackage.html and checkout the master branch of [UIComponents](https://github.com/scriptrdotio/UIComponents). Read more about it [here](https://github.com/scriptrdotio/https://github.com/scriptrdotio/nebula20-smartkitchens/tree/master/smartkitchens/view/build/Readme.md).
 
 # About the code
 This section gives you an overview of the structure of the application and describes the responsibilities of the different scripts and file that compose it.
 
 ## /api folder
-The api folder contains scripts that define the API of the asset-tracking application, i.e. they are used by clients, such as the user interface (UI) or the client application running on the devices.
+The api folder contains scripts that define the API of the nebula20-smartkitchens application, i.e. they are used by clients, such as the user interface (UI) or the client application running on the devices.
 
 - smartkitchens/api/subscription/subscriber: this script is subscribed to the nebulaDigest channel and would consume all the messages containing the measurements made by the device's sensors.
 "smartkitchens/api/subscription/subscriber" uses "entities/devicemanager" to persit the data. It uses "entities/deviceevaluator" to check for the occurrence of alerts. 
@@ -102,7 +116,7 @@ This folder contains the scripts that define the User Interface of the applicati
 - /view/html/views/alerts/alerts.html: grid that displays the list of alerts that were generated when receiving device data (alerts are generated depending on the business rules defined in "/entities/rules/alerts"
 
 ### /view/javascript
-The asset-tracking application leverages Angular.js and therefore adopts the corresponding MVC implementation. This folder contains the definition of the application's controllers.
+The nebula20-smartkitchens application leverages Angular.js and therefore adopts the corresponding MVC implementation. This folder contains the definition of the application's controllers.
 
 - view/javascript/module.js: implements the routing logic of the menu
 - view/javascript/controller.js: the main controller of the application

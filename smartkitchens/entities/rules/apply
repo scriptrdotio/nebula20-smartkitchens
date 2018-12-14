@@ -13,12 +13,22 @@ function process(device, request){
       var group = value.split("@"+request.account.accountKey)[0].split(":")[1]
       try{
         log.info("[smartkitchens/entities/rules/apply] Start Proccessing Device Specific rule")
-        decisionsByGroup[group] = utils.executeDecisionTable("smartkitchens/entities/rules/"+group+"/decision_table_" + device.id, device);
+        var decision = utils.executeDecisionTable("smartkitchens/entities/rules/"+group+"/decision_table_" + device.id, device);
+        if(decision && decision.metadata && decision.metadata.status == "failure") {
+            throw e;
+        } else {
+            decisionsByGroup[group] = decision;
+        }
         log.info("[smartkitchens/entities/rules/apply] End Proccessing Device Specific rule")
       }catch(e){
         try {
             log.info("[smartkitchens/entities/rules/apply] Start Proccessing Generic rule")
-            decisionsByGroup[group] = utils.executeDecisionTable("smartkitchens/entities/rules/"+group+"/decision_table_generic", device);
+           	var decision = utils.executeDecisionTable("smartkitchens/entities/rules/"+group+"/decision_table_generic", device);
+            if(decision && decision.metadata && decision.metadata.status == "failure") {
+                throw e;
+            } else {
+                decisionsByGroup[group] = decision;
+            }
             log.info("[smartkitchens/entities/rules/apply] End Proccessing Generic rule")
         } catch(e) {
             

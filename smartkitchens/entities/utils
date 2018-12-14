@@ -18,35 +18,15 @@ function format(data){
     return result;
 }
 
-
+/**
+* 
+* @function executeDecisionTable
+* @param {Object} [payload] the data to be processed 
+* @param {String} [decisionTable] the name of the table to be executed
+* @return {Object} the decision table result
+*
+*/
 function executeDecisionTable(decisionTable, payload){
-	var sdtLibScript = asLibrary(decisionTable);
-	return sdtLibScript.execute(payload); 
+    var sdtLibScript = require("m/scriptUtil");
+    return sdtLibScript.execute(decisionTable, {"payload": JSON.stringify(payload)});
 }
-
-//This is a utility function  to transform rest simple decision table scripts into a required library
-function asLibrary(sdtRestScript) {
-    log.info("simple decision table script "+sdtRestScript)
-    var params = {
-      "apsdb.scriptName": sdtRestScript
-    };
-    var sdt_api_script =  apsdb.callApi("GetScript", params, {});
-    if(sdt_api_script.metadata.status == "success") {
-      var o = JSON.parse(sdt_api_script.result);
-      //THIS NEEDS TO BE ENHANCED AS A REGEX THAT CATCHES ALL "return..." outside a function(){} definition;
-      //START TRANSFORM, to get decision table scriptr script
-      // var p = (o.substring((o.lastIndexOf("*#*#*/") + "*#*#*/".length), o.length ));
-      var p = o.content
-      var content = p.substring(0, p.lastIndexOf("//START_REST_CALL"));
-      log.info(content)
-      //Wrap library as a we would do if it was a require, pass request
-      var x = "(function(request){"+ content + " return {execute: function(payload) { return execute(payload);}}})(request)";
-      //Return decision table as a library
-      return eval(x);
-      //END TRANSFORM 
-    } else { //decision table script not found, return as if we required a non-existing script
-      return require(sdtRestScript);
-    }
-}
-
-

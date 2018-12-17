@@ -8,7 +8,7 @@ for(var j = 0; j < devices.documents.length; j++) {
     var entries = getDeviceHistoricalEntries(devices.documents[j].id,1)
     if(entries) {
         var pages = Math.ceil(entries.count/50)
-        for(var i = pages; i > 0; i--) {
+        for(var i = pages; i > 50; i--) {
             var toDelete = getDeviceHistoricalEntries(devices.documents[j].id, pages);
             for(var k = 0; k < toDelete.documents.length; k++){
                 log.info(k+" " +JSON.stringify(document.delete(toDelete.documents[k].key)))

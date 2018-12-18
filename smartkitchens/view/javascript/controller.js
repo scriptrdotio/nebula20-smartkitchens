@@ -107,8 +107,9 @@ myApp.controller('rulesCtrl', function(httpClient, $sce, $timeout,$routeParams) 
         });
 });
 
-myApp.controller('alertsCtrl', function(httpClient, $routeParams) {
+myApp.controller('alertsCtrl', function(httpClient, $routeParams, mapConstants) {
        var vm = this;
+    	vm.icons = mapConstants.infoWindows.icons;
        vm.deviceKey = null;
        vm.colDef = [
             {headerName: "Temperature", field: "temperature", cellRenderer: function(params){return params.value + " " + params.data.temperature_unit}},
@@ -148,8 +149,9 @@ myApp.controller('alertsCtrl', function(httpClient, $routeParams) {
 });
         	
 
-myApp.controller('dashboardCtrl', function($scope,  wsClient, httpClient, $routeParams) {
+myApp.controller('dashboardCtrl', function($scope,  wsClient, httpClient, $routeParamsmapConstants) {
     var vm = this;
+    vm.icons = mapConstants.infoWindows.icons;
     vm.deviceKey = null;
     vm.gridsterOptions = {
         pushing: false,
